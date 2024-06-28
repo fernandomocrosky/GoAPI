@@ -3,6 +3,7 @@ package repositories
 import (
 	"api/src/models"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -79,7 +80,8 @@ func (u users) GetByID(id uint64) (models.User, error) {
 		if err := lines.Scan(&user.Id, &user.Name, &user.Nick, &user.Email, &user.CreatedAt); err != nil {
 			return models.User{}, err
 		}
+		return user, nil
 	}
 
-	return user, nil
+	return models.User{}, errors.New("user not found")
 }
