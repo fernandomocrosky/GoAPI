@@ -115,3 +115,21 @@ func (u users) Delete(id uint64) error {
 
 	return nil
 }
+
+func (u users) GetUserByEmail(email string) (models.User, error) {
+	line, err := u.db.Query("SELECT id, email, password FROM users WHERE email = ?", email)
+	if err != nil {
+		return models.User{}, err
+	}
+	defer line.Close()
+
+	var user models.User
+
+	if line.Next() {
+		if err = line.Scan(&user.Id, &user.Email, &user.Password); err != nil {
+			return models.User{}, err
+		}
+	}
+
+	return user, nil
+}
