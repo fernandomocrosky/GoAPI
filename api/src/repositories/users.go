@@ -85,3 +85,33 @@ func (u users) GetByID(id uint64) (models.User, error) {
 
 	return models.User{}, errors.New("user not found")
 }
+
+func (u users) Update(id uint64, user models.User) error {
+	statement, err := u.db.Prepare("UPDATE users SET name = ?, nick = ?, email = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(user.Name, user.Nick, user.Email, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u users) Delete(id uint64) error {
+	statement, err := u.db.Prepare("DELETE FROM users WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
